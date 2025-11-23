@@ -10,7 +10,7 @@
 
   <!-- Google Fonts -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap"
     rel="stylesheet"
   />
 
@@ -22,16 +22,17 @@
           fontFamily: {
             sans: ['Inter', 'system-ui', 'sans-serif'],
             serif: ['Playfair Display', 'serif'],
+            signature: ['Pacifico', 'cursive'],
           },
           colors: {
-            'brand-dark': '#0b1729',
+            'brand-dark': '#020617',
             'brand-primary': '#0077b6',
             'brand-soft': '#e3f2ff',
             'brand-accent': '#00b4d8',
             'muted-text': '#556276',
           },
           boxShadow: {
-            soft: '0 18px 45px rgba(15, 23, 42, 0.12)',
+            soft: '0 14px 35px rgba(15, 23, 42, 0.14)',
           }
         }
       }
@@ -39,21 +40,46 @@
   </script>
 
   <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top left, #dbeafe 0, #eff6ff 40%, #f9fafb 85%);
+      --text-main: #0b1729;
+      --text-muted: #556276;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --card-border: rgba(148, 163, 184, 0.4);
+      --signature-color: #0077b6;
+    }
+
+    html.dark {
+      --bg-gradient: radial-gradient(circle at top left, #020617 0, #020617 30%, #0b1220 80%);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --card-bg: rgba(15, 23, 42, 0.96);
+      --card-border: rgba(148, 163, 184, 0.35);
+      --signature-color: #38bdf8;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top left, #dbeafe 0, #eff6ff 35%, #f9fafb 70%, #e0f7ff 100%);
-      color: #0b1729;
+      background: var(--bg-gradient);
+      color: var(--text-main);
       position: relative;
       min-height: 100vh;
     }
 
-    html.dark body {
-      background: radial-gradient(circle at top left, #020617 0, #020617 30%, #020617 70%, #020617 100%);
-      color: #e5e7eb;
-    }
-
     h1, h2, h3, h4 {
       font-family: 'Playfair Display', serif;
+    }
+
+    /* Soft dotted texture */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -40%;
+      z-index: -1;
+      background-image: radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.05) 1px, transparent 0);
+      background-size: 12px 12px;
+      opacity: 0.3;
+      pointer-events: none;
     }
 
     /* Scroll progress bar */
@@ -70,26 +96,28 @@
     /* Fade-in on scroll */
     .fade-in {
       opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
     .fade-in.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* Card hover */
+    /* Card base */
     .card {
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.2s ease;
     }
-    .card:hover {
+    .card-hover:hover {
       transform: translateY(-3px);
       box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
-      background-color: rgba(255, 255, 255, 0.98);
+      background-color: rgba(255, 255, 255, 0.96);
     }
-    html.dark .card:hover {
+    html.dark .card-hover:hover {
       background-color: rgba(15, 23, 42, 0.98);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.75);
     }
 
     /* Back to top */
@@ -107,88 +135,78 @@
       transition: max-height 0.3s ease;
     }
     .year-block.open .year-body {
-      max-height: 2000px; /* large enough */
+      max-height: 2000px; /* big enough */
     }
     .year-chevron {
-      transition: transform 0.25s ease;
+      transition: transform 0.22s ease;
     }
     .year-block.open .year-chevron {
       transform: rotate(180deg);
     }
 
-    /* Floating signature badge */
-    .signature-badge {
-      position: absolute;
-      bottom: -12px;
-      right: -10px;
-      padding: 0.45rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.92);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.25);
-      color: #0b1729;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      animation: floatSignature 6s ease-in-out infinite;
-      backdrop-filter: blur(6px);
+    /* Signature under name */
+    .signature-wrapper {
+      display: inline-block;
+      overflow: hidden;
+      max-width: 0;
+      animation: signature-reveal 2s ease-out 0.4s forwards;
+      white-space: nowrap;
     }
 
-    html.dark .signature-badge {
-      background: rgba(15, 23, 42, 0.95);
-      color: #e5e7eb;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    .signature-text {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.4rem;
+      color: var(--signature-color);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      transform: translateY(6px);
+      animation: signature-fade 1.3s ease-out 0.4s forwards;
     }
 
     .signature-dot {
-      width: 7px;
-      height: 7px;
+      width: 10px;
+      height: 10px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #00b4d8, #38bdf8);
+      background: var(--signature-color);
+      box-shadow: 0 0 12px rgba(0, 180, 216, 0.5);
+      flex-shrink: 0;
     }
 
-    @keyframes floatSignature {
-      0% { transform: translate(0, 0); }
-      50% { transform: translate(-6px, -6px); }
-      100% { transform: translate(0, 0); }
+    @keyframes signature-reveal {
+      from { max-width: 0; }
+      to { max-width: 320px; }
     }
 
-    /* Soft glowing blobs behind hero (performance-friendly) */
-    .blob {
-      position: absolute;
-      border-radius: 999px;
-      opacity: 0.55;
-      pointer-events: none;
-      filter: blur(22px);
-      transform: translate3d(0,0,0);
-    }
-    .blob-1 {
-      width: 160px;
-      height: 160px;
-      top: -30px;
-      left: -30px;
-      background: radial-gradient(circle at 30% 30%, #38bdf8 0, rgba(56,189,248,0) 70%);
-      animation: blobDrift1 12s ease-in-out infinite alternate;
-    }
-    .blob-2 {
-      width: 190px;
-      height: 190px;
-      bottom: -40px;
-      right: -30px;
-      background: radial-gradient(circle at 70% 30%, #22c55e 0, rgba(34,197,94,0) 75%);
-      animation: blobDrift2 18s ease-in-out infinite alternate;
+    @keyframes signature-fade {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes blobDrift1 {
-      0% { transform: translate3d(0,0,0); }
-      100% { transform: translate3d(10px, 8px, 0); }
+    /* Gentle floating effect */
+    .signature-floating {
+      animation: signature-float 4.5s ease-in-out 2.6s infinite alternate;
     }
 
-    @keyframes blobDrift2 {
-      0% { transform: translate3d(0,0,0); }
-      100% { transform: translate3d(-12px, -10px, 0); }
+    @keyframes signature-float {
+      from { transform: translateY(0); }
+      to { transform: translateY(-4px); }
+    }
+
+    @media (max-width: 640px) {
+      .signature-text {
+        font-size: 1.2rem;
+      }
+    }
+
+    /* Theme toggle icons */
+    .theme-icon {
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    .theme-icon.hidden {
+      opacity: 0;
+      transform: scale(0.85);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -201,50 +219,57 @@
   </style>
 </head>
 
-<body class="text-brand-dark dark:text-slate-100">
+<body>
   <!-- Scroll progress bar -->
   <div id="progress-bar"></div>
 
   <!-- NAVBAR -->
-  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur shadow-sm">
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/90 backdrop-blur shadow-sm">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
       <!-- Brand -->
       <a href="#home" class="font-serif text-xl md:text-2xl font-semibold text-brand-primary dark:text-sky-300">
         Amr Ahmed WalyEldeen
       </a>
 
-      <!-- Desktop nav -->
-      <nav class="hidden md:flex gap-5 text-sm font-medium text-muted-text dark:text-slate-300">
-        <a href="#about" class="hover:text-brand-primary dark:hover:text-sky-300">About</a>
-        <a href="#education" class="hover:text-brand-primary dark:hover:text-sky-300">Education</a>
-        <a href="#experience" class="hover:text-brand-primary dark:hover:text-sky-300">Experience</a>
-        <a href="#projects" class="hover:text-brand-primary dark:hover:text-sky-300">Projects</a>
-        <a href="#publications" class="hover:text-brand-primary dark:hover:text-sky-300">Publications</a>
-        <a href="#training" class="hover:text-brand-primary dark:hover:text-sky-300">Training</a>
-        <a href="#teaching" class="hover:text-brand-primary dark:hover:text-sky-300">Teaching</a>
-        <a href="#skills" class="hover:text-brand-primary dark:hover:text-sky-300">Skills</a>
-        <a href="#thesis" class="hover:text-brand-primary dark:hover:text-sky-300">Thesis</a>
-        <a href="#contact" class="hover:text-brand-primary dark:hover:text-sky-300">Contact</a>
-      </nav>
+      <div class="flex items-center gap-3">
+        <!-- Desktop nav -->
+        <nav class="hidden md:flex gap-4 text-sm font-medium text-muted-text dark:text-gray-300">
+          <a href="#about" class="hover:text-brand-primary dark:hover:text-sky-300">About</a>
+          <a href="#education" class="hover:text-brand-primary dark:hover:text-sky-300">Education</a>
+          <a href="#experience" class="hover:text-brand-primary dark:hover:text-sky-300">Experience</a>
+          <a href="#projects" class="hover:text-brand-primary dark:hover:text-sky-300">Projects</a>
+          <a href="#publications" class="hover:text-brand-primary dark:hover:text-sky-300">Publications</a>
+          <a href="#training" class="hover:text-brand-primary dark:hover:text-sky-300">Training</a>
+          <a href="#teaching" class="hover:text-brand-primary dark:hover:text-sky-300">Teaching</a>
+          <a href="#skills" class="hover:text-brand-primary dark:hover:text-sky-300">Skills</a>
+          <a href="#thesis" class="hover:text-brand-primary dark:hover:text-sky-300">Thesis</a>
+          <a href="#contact" class="hover:text-brand-primary dark:hover:text-sky-300">Contact</a>
+        </nav>
 
-      <div class="flex items-center gap-2">
-        <!-- Dark/Light toggle -->
+        <!-- Theme toggle -->
         <button
           id="theme-toggle"
-          class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
           aria-label="Toggle dark mode"
         >
-          <span id="theme-icon" class="text-xs">☾</span>
+          <!-- Sun (light icon) -->
+          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="theme-icon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.535-7.535L16.12 5.88M7.88 16.12l-1.415 1.415m0-11.655L7.88 7.88m8.24 8.24 1.415 1.415"></path>
+          </svg>
+          <!-- Moon (dark icon) -->
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="theme-icon w-4 h-4 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M21 12.79A9 9 0 0 1 12.21 3 7 7 0 1 0 21 12.79z"></path>
+          </svg>
         </button>
 
         <!-- Mobile hamburger -->
         <button
           id="mobile-menu-btn"
-          class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-slate-900/80 hover:bg-slate-100 dark:hover:bg-slate-800"
+          class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700"
           aria-label="Open navigation menu"
           aria-expanded="false"
         >
-          <!-- Icon -->
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h10" />
           </svg>
@@ -269,7 +294,7 @@
       <span class="font-serif font-semibold text-brand-primary dark:text-sky-300">Menu</span>
       <button
         id="mobile-menu-close"
-        class="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800"
+        class="inline-flex items-center justify-center w-8 h-8 rounded-full border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 bg-white/90 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700"
         aria-label="Close navigation menu"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -278,17 +303,17 @@
       </button>
     </div>
     <div class="flex-1 overflow-y-auto">
-      <ul class="px-4 py-3 space-y-2 text-sm font-medium text-slate-800 dark:text-slate-200">
-        <li><a href="#home" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Home</a></li>
-        <li><a href="#about" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">About</a></li>
-        <li><a href="#education" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Education</a></li>
-        <li><a href="#experience" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Experience</a></li>
-        <li><a href="#projects" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Projects</a></li>
-        <li><a href="#publications" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Publications</a></li>
-        <li><a href="#training" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Training</a></li>
-        <li><a href="#teaching" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Teaching</a></li>
-        <li><a href="#skills" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Skills</a></li>
-        <li><a href="#thesis" class="block py-2 border-b border-slate-100 dark:border-slate-700 mobile-link">Thesis</a></li>
+      <ul class="px-4 py-3 space-y-2 text-sm font-medium text-slate-800 dark:text-slate-100">
+        <li><a href="#home" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Home</a></li>
+        <li><a href="#about" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">About</a></li>
+        <li><a href="#education" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Education</a></li>
+        <li><a href="#experience" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Experience</a></li>
+        <li><a href="#projects" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Projects</a></li>
+        <li><a href="#publications" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Publications</a></li>
+        <li><a href="#training" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Training</a></li>
+        <li><a href="#teaching" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Teaching</a></li>
+        <li><a href="#skills" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Skills</a></li>
+        <li><a href="#thesis" class="block py-2 border-b border-slate-100 dark:border-slate-800 mobile-link">Thesis</a></li>
         <li><a href="#contact" class="block py-2 mobile-link">Contact</a></li>
       </ul>
     </div>
@@ -302,11 +327,22 @@
         <h1 class="text-4xl md:text-5xl font-semibold leading-tight">
           Amr Ahmed<br class="hidden sm:block" /> WalyEldeen
         </h1>
-        <p class="mt-4 text-lg text-muted-text dark:text-slate-300">
+
+        <!-- Signature under name -->
+        <div class="mt-3">
+          <div class="signature-wrapper">
+            <div class="signature-text signature-floating">
+              <span class="signature-dot"></span>
+              <span>Amr A. WalyEldeen</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-5 text-lg text-muted-text dark:text-gray-300">
           Assistant Lecturer of Cell Biology, Histology &amp; Genetics<br />
           Faculty of Science, Cairo University.
         </p>
-        <p class="mt-5 text-base">
+        <p class="mt-4 text-base">
           I am a researcher in <strong>cancer cell biology</strong>, <strong>molecular oncology</strong>, and
           <strong>extracellular vesicle biology</strong>. My work focuses on deciphering the molecular mechanisms of
           cancer progression, metastasis, and therapeutic resistance, with a particular emphasis on
@@ -316,48 +352,24 @@
           <a href="#contact" class="inline-flex items-center px-5 py-2.5 rounded-full bg-brand-primary text-white text-sm font-semibold shadow-soft hover:bg-[#005f8f]">
             Contact me
           </a>
-          <a href="#publications" class="inline-flex items-center px-5 py-2.5 rounded-full border border-brand-primary text-brand-primary text-sm font-semibold bg-white/80 dark:bg-slate-900/80 dark:text-sky-300 hover:bg-brand-soft dark:hover:bg-slate-800">
+          <a href="#publications" class="inline-flex items-center px-5 py-2.5 rounded-full border border-brand-primary text-brand-primary text-sm font-semibold bg-white/80 dark:bg-slate-900/60 dark:text-sky-300 hover:bg-brand-soft/70 dark:hover:bg-slate-800">
             View publications
           </a>
-          <a
-            href="CV 2025 Amr WalyEldeen.docx"
-            download
-            class="inline-flex items-center px-5 py-2.5 rounded-full border border-emerald-500 text-emerald-700 dark:text-emerald-300 text-sm font-semibold bg-white/80 dark:bg-slate-900/80 hover:bg-emerald-50 dark:hover:bg-slate-800"
-          >
+          <a href="Amr_CV_2025.pdf" class="inline-flex items-center px-5 py-2.5 rounded-full border border-slate-300 dark:border-slate-600 text-sm font-semibold bg-white/80 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800"
+             download>
             Download CV
           </a>
         </div>
-
-        <!-- Research keywords -->
-        <div class="mt-6 flex flex-wrap gap-2 text-xs">
-          <span class="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-muted-text dark:text-slate-300">Cancer cell biology</span>
-          <span class="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-muted-text dark:text-slate-300">Breast cancer biomarkers</span>
-          <span class="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-muted-text dark:text-slate-300">Extracellular vesicles</span>
-          <span class="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-muted-text dark:text-slate-300">Liquid biopsy</span>
-          <span class="px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-muted-text dark:text-slate-300">Translational oncology</span>
-        </div>
       </div>
-
       <div class="flex justify-center">
-        <div class="relative w-56 h-56 md:w-64 md:h-64">
-          <!-- Glowing blobs -->
-          <div class="blob blob-1"></div>
-          <div class="blob blob-2"></div>
-
-          <!-- Photo card -->
-          <div class="relative w-full h-full rounded-3xl border border-white/80 dark:border-slate-700 bg-white/90 dark:bg-slate-900/95 shadow-soft overflow-hidden">
-            <img
-              src="amr.jpg.jpg"
-              alt="Photo of Amr Ahmed WalyEldeen"
-              onerror="this.onerror=null; this.src='amr.jpg';"
-              class="w-full h-full object-cover"
-            />
-            <!-- Floating signature badge -->
-            <div class="signature-badge">
-              <span class="signature-dot"></span>
-              <span>Amr A. WalyEldeen</span>
-            </div>
-          </div>
+        <div class="relative">
+          <div class="absolute -top-4 -left-4 w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-primary/40 to-brand-accent/40 blur-2xl opacity-70"></div>
+          <div class="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-gradient-to-tr from-brand-accent/50 to-sky-200 blur-2xl opacity-60"></div>
+          <img
+            src="amr.jpg.jpg"
+            alt="Photo of Amr Ahmed WalyEldeen"
+            class="relative w-56 h-56 md:w-64 md:h-64 rounded-3xl object-cover shadow-soft border border-white/80 bg-white"
+          />
         </div>
       </div>
     </section>
@@ -365,21 +377,21 @@
     <!-- QUICK STATS -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-8 fade-in">
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="card bg-white/80 dark:bg-slate-900/80 rounded-2xl p-4 text-center border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-4 text-center">
           <div class="text-2xl font-bold text-brand-primary dark:text-sky-300">M.Sc.</div>
-          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-slate-300 mt-1">Cell Biology, Histology &amp; Genetics</div>
+          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-gray-400 mt-1">Cell Biology, Histology &amp; Genetics</div>
         </div>
-        <div class="card bg-white/80 dark:bg-slate-900/80 rounded-2xl p-4 text-center border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-4 text-center">
           <div class="text-2xl font-bold text-brand-primary dark:text-sky-300">2017</div>
-          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-slate-300 mt-1">B.Sc. Zoology &amp; Chemistry (Honours)</div>
+          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-gray-400 mt-1">B.Sc. Zoology &amp; Chemistry (Honours)</div>
         </div>
-        <div class="card bg-white/80 dark:bg-slate-900/80 rounded-2xl p-4 text-center border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-4 text-center">
           <div class="text-2xl font-bold text-brand-primary dark:text-sky-300">10+</div>
-          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-slate-300 mt-1">Peer-reviewed publications</div>
+          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-gray-400 mt-1">Peer-reviewed publications</div>
         </div>
-        <div class="card bg-white/80 dark:bg-slate-900/80 rounded-2xl p-4 text-center border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-4 text-center">
           <div class="text-2xl font-bold text-brand-primary dark:text-sky-300">2</div>
-          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-slate-300 mt-1">Funded projects</div>
+          <div class="text-xs uppercase tracking-wide text-muted-text dark:text-gray-400 mt-1">Funded projects</div>
         </div>
       </div>
     </section>
@@ -387,7 +399,7 @@
     <!-- ABOUT -->
     <section id="about" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">About Me</h2>
-      <p class="text-base leading-relaxed mb-6 text-muted-text dark:text-slate-300">
+      <p class="text-base leading-relaxed mb-6">
         I am an <strong>Assistant Lecturer</strong> and researcher at the Department of Zoology, Faculty of Science,
         Cairo University. My research interests span cancer biology, extracellular vesicles, tumor microenvironment,
         and translational oncology. I am currently pursuing a Ph.D. focusing on
@@ -396,7 +408,7 @@
       </p>
 
       <div class="grid md:grid-cols-2 gap-8">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-xl font-semibold mb-3">Personal Information</h3>
           <ul class="space-y-2 text-sm">
             <li><strong>Full name:</strong> Amr Ahmed Abdelfattah Ahmed WalyEldeen</li>
@@ -408,7 +420,7 @@
             <li><strong>Email:</strong> awalyeldeen@sci.cu.edu.eg &nbsp;|&nbsp; amr.waly.eldeen@gmail.com</li>
           </ul>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-xl font-semibold mb-3">Academic Profiles</h3>
           <ul class="space-y-2 text-sm">
             <li><a href="https://scholar.cu.edu.eg/?q=waly/" target="_blank" class="text-brand-primary dark:text-sky-300 hover:underline">Cairo Scholar</a></li>
@@ -431,28 +443,28 @@
     <section id="education" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Education</h2>
       <div class="space-y-5">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="card card-hover rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
           <div>
             <h3 class="text-lg font-semibold">M.Sc. in Cell Biology, Histology &amp; Genetics</h3>
-            <p class="text-sm text-muted-text dark:text-slate-300">Faculty of Science, Cairo University, Egypt</p>
+            <p class="text-muted-text dark:text-gray-400">Faculty of Science, Cairo University, Egypt</p>
           </div>
-          <div class="text-sm font-semibold text-brand-primary dark:text-sky-300">2021</div>
+          <div class="font-semibold text-brand-primary dark:text-sky-300">2021</div>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="card card-hover rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
           <div>
             <h3 class="text-lg font-semibold">Pre-master Courses in Cell Biology, Histology &amp; Genetics</h3>
-            <p class="text-sm text-muted-text dark:text-slate-300">Faculty of Science, Cairo University, Egypt</p>
-            <p class="text-xs text-muted-text dark:text-slate-400 mt-1">Grade: Very Good (84%)</p>
+            <p class="text-muted-text dark:text-gray-400">Faculty of Science, Cairo University, Egypt</p>
+            <p class="text-xs text-muted-text dark:text-gray-500 mt-1">Grade: Very Good (84%)</p>
           </div>
-          <div class="text-sm font-semibold text-brand-primary dark:text-sky-300">2018</div>
+          <div class="font-semibold text-brand-primary dark:text-sky-300">2018</div>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="card card-hover rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm">
           <div>
             <h3 class="text-lg font-semibold">B.Sc. in Zoology &amp; Chemistry</h3>
-            <p class="text-sm text-muted-text dark:text-slate-300">Faculty of Science, Cairo University, Egypt</p>
-            <p class="text-xs text-muted-text dark:text-slate-400 mt-1">Excellent with Honors (GPA 4.2/5, 92%)</p>
+            <p class="text-muted-text dark:text-gray-400">Faculty of Science, Cairo University, Egypt</p>
+            <p class="text-xs text-muted-text dark:text-gray-500 mt-1">Excellent with Honors (GPA 4.2/5, 92%)</p>
           </div>
-          <div class="text-sm font-semibold text-brand-primary dark:text-sky-300">2017</div>
+          <div class="font-semibold text-brand-primary dark:text-sky-300">2017</div>
         </div>
       </div>
     </section>
@@ -460,32 +472,32 @@
     <!-- PROFESSIONAL EXPERIENCE -->
     <section id="experience" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Professional Experience</h2>
-      <div class="space-y-5">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+      <div class="space-y-5 text-sm">
+        <div class="card card-hover rounded-2xl p-5">
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
             <div>
               <h3 class="text-lg font-semibold">Assistant Lecturer</h3>
-              <p class="text-sm text-muted-text dark:text-slate-300">Zoology Department, Faculty of Science, Cairo University, Giza, Egypt</p>
+              <p class="text-muted-text dark:text-gray-400">Zoology Department, Faculty of Science, Cairo University, Giza, Egypt</p>
             </div>
-            <div class="text-sm font-semibold text-brand-primary dark:text-sky-300">Sep 2022 – Present</div>
+            <div class="font-semibold text-brand-primary dark:text-sky-300">Sep 2022 – Present</div>
           </div>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
             <div>
               <h3 class="text-lg font-semibold">Teaching Assistant</h3>
-              <p class="text-sm text-muted-text dark:text-slate-300">Zoology Department, Faculty of Science, Cairo University, Giza, Egypt</p>
+              <p class="text-muted-text dark:text-gray-400">Zoology Department, Faculty of Science, Cairo University, Giza, Egypt</p>
             </div>
-            <div class="text-sm font-semibold text-brand-primary dark:text-sky-300">Dec 2018 – Sep 2022</div>
+            <div class="font-semibold text-brand-primary dark:text-sky-300">Dec 2018 – Sep 2022</div>
           </div>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
             <div>
               <h3 class="text-lg font-semibold">Chemist</h3>
-              <p class="text-sm text-muted-text dark:text-slate-300">Alfa Laboratories, Giza, Egypt</p>
+              <p class="text-muted-text dark:text-gray-400">Alfa Laboratories, Giza, Egypt</p>
             </div>
-            <div class="text-sm font-semibold text-brand-primary dark:text-sky-300">Oct 2017 – Oct 2018</div>
+            <div class="font-semibold text-brand-primary dark:text-sky-300">Oct 2017 – Oct 2018</div>
           </div>
         </div>
       </div>
@@ -495,7 +507,7 @@
     <section id="projects" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Research Projects</h2>
       <div class="grid md:grid-cols-2 gap-6 text-sm">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-2">
             Extracellular vesicle-derived proteoglycans as non-invasive liquid biopsy-based cancer biomarkers: Towards novel breast cancer screening
           </h3>
@@ -504,7 +516,7 @@
           <p><strong>Funding Institution:</strong> Science, Technology &amp; Innovation Funding Authority (STDF), Egypt</p>
         </div>
 
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-2">
             Proteomic profiling of exosomes: Discovery of novel diagnostic biomarkers for lymph node metastasis in breast cancer
           </h3>
@@ -520,13 +532,13 @@
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
         <div>
           <h2 class="text-3xl font-semibold">Publications</h2>
-          <p class="text-sm text-muted-text dark:text-slate-300 mt-1">
+          <p class="text-sm text-muted-text dark:text-gray-400 mt-1">
             Click a year to expand; use the sort control to reorder years.
           </p>
         </div>
         <div class="flex items-center gap-2 text-sm">
-          <label for="pub-sort" class="text-muted-text dark:text-slate-300">Sort years:</label>
-          <select id="pub-sort" class="border border-gray-300 dark:border-slate-600 rounded-full px-3 py-1.5 bg-white/90 dark:bg-slate-900/90 text-sm">
+          <label for="pub-sort" class="text-muted-text dark:text-gray-400">Sort years:</label>
+          <select id="pub-sort" class="border border-gray-300 dark:border-slate-600 rounded-full px-3 py-1.5 bg-white/90 dark:bg-slate-900/80 text-sm">
             <option value="desc">Year (Newest first)</option>
             <option value="asc">Year (Oldest first)</option>
           </select>
@@ -535,13 +547,13 @@
 
       <div id="pub-years-container" class="space-y-3 text-sm">
         <!-- 2025 -->
-        <div class="year-block card bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-white/70 dark:border-slate-700" data-year="2025">
+        <div class="year-block card card-hover rounded-2xl" data-year="2025">
           <button
             type="button"
             class="w-full flex items-center justify-between px-5 py-3 text-left"
           >
             <span class="font-semibold text-base">2025</span>
-            <span class="year-chevron text-xs text-muted-text dark:text-slate-300">▼</span>
+            <span class="year-chevron text-xs text-muted-text dark:text-gray-400">▼</span>
           </button>
           <div class="year-body px-5 pb-4">
             <ul class="space-y-3">
@@ -588,13 +600,13 @@
         </div>
 
         <!-- 2024 -->
-        <div class="year-block card bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-white/70 dark:border-slate-700" data-year="2024">
+        <div class="year-block card card-hover rounded-2xl" data-year="2024">
           <button
             type="button"
             class="w-full flex items-center justify-between px-5 py-3 text-left"
           >
             <span class="font-semibold text-base">2024</span>
-            <span class="year-chevron text-xs text-muted-text dark:text-slate-300">▼</span>
+            <span class="year-chevron text-xs text-muted-text dark:text-gray-400">▼</span>
           </button>
           <div class="year-body px-5 pb-4">
             <ul class="space-y-3">
@@ -609,13 +621,13 @@
         </div>
 
         <!-- 2023 -->
-        <div class="year-block card bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-white/70 dark:border-slate-700" data-year="2023">
+        <div class="year-block card card-hover rounded-2xl" data-year="2023">
           <button
             type="button"
             class="w-full flex items-center justify-between px-5 py-3 text-left"
           >
             <span class="font-semibold text-base">2023</span>
-            <span class="year-chevron text-xs text-muted-text dark:text-slate-300">▼</span>
+            <span class="year-chevron text-xs text-muted-text dark:text-gray-400">▼</span>
           </button>
           <div class="year-body px-5 pb-4">
             <ul class="space-y-3">
@@ -636,13 +648,13 @@
         </div>
 
         <!-- 2022 -->
-        <div class="year-block card bg-white/90 dark:bg-slate-900/90 rounded-2xl border border-white/70 dark:border-slate-700" data-year="2022">
+        <div class="year-block card card-hover rounded-2xl" data-year="2022">
           <button
             type="button"
             class="w-full flex items-center justify-between px-5 py-3 text-left"
           >
             <span class="font-semibold text-base">2022</span>
-            <span class="year-chevron text-xs text-muted-text dark:text-slate-300">▼</span>
+            <span class="year-chevron text-xs text-muted-text dark:text-gray-400">▼</span>
           </button>
           <div class="year-body px-5 pb-4">
             <ul class="space-y-3">
@@ -669,7 +681,7 @@
       <h2 class="text-3xl font-semibold mb-6">Training &amp; Workshops</h2>
 
       <div class="grid md:grid-cols-2 gap-6 text-sm">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Recent (2020–2025)</h3>
           <ul class="space-y-2 list-disc list-inside">
             <li>2025 – Training course on applications of artificial intelligence, FLDC, Cairo University.</li>
@@ -684,7 +696,7 @@
           </ul>
         </div>
 
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Earlier Experience</h3>
           <ul class="space-y-2 list-disc list-inside">
             <li>2020 – Online seminar “Targeting metastatic breast cancer”, Johns Hopkins University.</li>
@@ -706,17 +718,17 @@
     <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Organization &amp; Outreach Experience</h2>
       <ul class="space-y-3 text-sm">
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           <strong>2022:</strong> Presenter &amp; organizer – “Hands-on basic and advanced cell culture techniques”
           workshop, Egyptian Society of Embryology and Assisted Reproduction Technologies.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           <strong>2020:</strong> Presenter – Online workshop “Introduction to Bioinformatics Tools”.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           <strong>2019:</strong> Organizer – Workshop “Sustainable development, scientific research, and labor market”, Faculty of Science, Cairo University.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           <strong>2018:</strong> Organizer – Workshop “Requirements of work and different aspects for working for graduates of Zoology Department”.
         </li>
       </ul>
@@ -725,23 +737,23 @@
     <!-- TEACHING EXPERIENCE -->
     <section id="teaching" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Teaching Experience</h2>
-      <p class="text-sm text-muted-text dark:text-slate-300 mb-4">
+      <p class="text-sm text-muted-text dark:text-gray-400 mb-4">
         Weekly practical teaching for undergraduate students at the Department of Zoology, Faculty of Science, Cairo University.
       </p>
       <ul class="space-y-3 text-sm">
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           Practical General Zoology I &amp; II – First-year undergraduate students.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           Practical Cell Biology – Second-year undergraduate students.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           Practical Genetics – Second-year undergraduate students.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           Practical Histochemistry – Fourth-year undergraduate students.
         </li>
-        <li class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-4 border border-white/70 dark:border-slate-700">
+        <li class="card card-hover rounded-2xl p-4">
           Practical Molecular Biology – Fourth-year undergraduate students.
         </li>
       </ul>
@@ -751,7 +763,7 @@
     <section id="skills" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Skills</h2>
       <div class="grid md:grid-cols-3 gap-6 text-sm">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Laboratory Skills</h3>
           <ul class="space-y-1 list-disc list-inside">
             <li>DNA &amp; RNA extraction (tissue and blood)</li>
@@ -765,7 +777,7 @@
             <li>ELISA</li>
           </ul>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Computational &amp; Analysis</h3>
           <ul class="space-y-1 list-disc list-inside">
             <li>Protein modeling</li>
@@ -775,7 +787,7 @@
             <li>Bioinformatics workflows</li>
           </ul>
         </div>
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Technical &amp; Digital</h3>
           <ul class="space-y-1 list-disc list-inside">
             <li>Program development using AI tools</li>
@@ -793,12 +805,12 @@
     <!-- THESIS -->
     <section id="thesis" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Master’s Thesis</h2>
-      <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700 text-sm">
+      <div class="card card-hover rounded-2xl p-5 text-sm">
         <h3 class="text-lg font-semibold mb-2">
           Evaluation of the Potential Anticancer Effect of a Novel Chalcone Derivative in Ehrlich Solid
           Carcinoma-Bearing Mice
         </h3>
-        <p class="text-muted-text dark:text-slate-300 mb-2">
+        <p class="text-muted-text dark:text-gray-400 mb-2">
           Department of Zoology, Faculty of Science, Cairo University.
         </p>
         <p class="mb-2">
@@ -813,7 +825,7 @@
     <section id="contact" class="max-w-6xl mx-auto px-4 sm:px-6 py-10 fade-in">
       <h2 class="text-3xl font-semibold mb-6">Contact &amp; References</h2>
       <div class="grid md:grid-cols-2 gap-6 text-sm">
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Contact</h3>
           <p><strong>Affiliation:</strong><br />Cellular &amp; Molecular Biosciences Research Lab,<br />Department of Zoology, Faculty of Science,<br />Cairo University, 12613 Giza, Egypt.</p>
           <p class="mt-3">
@@ -826,7 +838,7 @@
           </p>
         </div>
 
-        <div class="card bg-white/90 dark:bg-slate-900/90 rounded-2xl p-5 border border-white/70 dark:border-slate-700">
+        <div class="card card-hover rounded-2xl p-5">
           <h3 class="text-lg font-semibold mb-3">Academic References</h3>
           <p class="mb-3">
             <strong>Prof. Dr. Sherif Abdelaziz Ibrahim</strong><br />
@@ -841,7 +853,7 @@
             <a href="mailto:salwasabet@cu.edu.eg" class="text-brand-primary dark:text-sky-300 hover:underline">salwasabet@cu.edu.eg</a>
           </p>
           <p>
-            <strong>Associate Professor Ayman Maher Ibrahim</strong><br />
+            <strong>Associate Professor Dr. Ayman Maher Ibrahim</strong><br />
             Zoology Department, Faculty of Science, Cairo University<br />
             Email:
             <a href="mailto:sci_ayman@cu.edu.eg" class="text-brand-primary dark:text-sky-300 hover:underline">sci_ayman@cu.edu.eg</a>
@@ -852,8 +864,8 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 mt-4">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-xs text-muted-text dark:text-slate-400 flex flex-wrap justify-between gap-2">
+  <footer class="border-t border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900 mt-4">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 text-xs text-muted-text dark:text-gray-400 flex flex-wrap justify-between gap-2">
       <span>© <span id="year"></span> Amr Ahmed WalyEldeen.</span>
       <span>Faculty of Science, Cairo University.</span>
     </div>
@@ -868,42 +880,10 @@
     ↑
   </button>
 
-  <!-- JavaScript for theme, year, scroll, fade-in, publications sorting & collapse, mobile menu -->
+  <!-- JavaScript -->
   <script>
     // Year in footer
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // THEME TOGGLE with localStorage
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-
-    function setThemeIcon() {
-      if (document.documentElement.classList.contains('dark')) {
-        themeIcon.textContent = '☀';
-      } else {
-        themeIcon.textContent = '☾';
-      }
-    }
-
-    // Load stored theme
-    const storedTheme = localStorage.getItem('theme');
-    if (storedTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else if (storedTheme === 'light') {
-      document.documentElement.classList.remove('dark');
-    } else {
-      // Prefer system theme by default
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark');
-      }
-    }
-    setThemeIcon();
-
-    themeToggle.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-      setThemeIcon();
-    });
 
     // Scroll progress bar & back-to-top visibility
     const progressBar = document.getElementById('progress-bar');
@@ -911,14 +891,10 @@
     window.addEventListener('scroll', () => {
       const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = height > 0 ? (scrollTop / height) * 100 : 0;
+      const scrolled = (scrollTop / height) * 100;
       progressBar.style.width = scrolled + '%';
 
-      if (scrollTop > 300) {
-        backToTopBtn.style.display = 'flex';
-      } else {
-        backToTopBtn.style.display = 'none';
-      }
+      backToTopBtn.style.display = scrollTop > 300 ? 'flex' : 'none';
     });
 
     backToTopBtn.addEventListener('click', () => {
@@ -948,11 +924,9 @@
         block.classList.toggle('open');
       });
     });
-    // Open newest year by default (2025)
+    // Open newest year by default
     const newest = document.querySelector('.year-block[data-year="2025"]');
-    if (newest) {
-      newest.classList.add('open');
-    }
+    if (newest) newest.classList.add('open');
 
     // Publications: sort by year (asc/desc)
     const pubSortSelect = document.getElementById('pub-sort');
@@ -971,9 +945,42 @@
     pubSortSelect.addEventListener('change', (e) => {
       sortYearBlocks(e.target.value);
     });
-
-    // Initial sort (newest first)
     sortYearBlocks('desc');
+
+    // Theme toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const docEl = document.documentElement;
+    const iconSun = document.getElementById('icon-sun');
+    const iconMoon = document.getElementById('icon-moon');
+
+    function setThemeIcon(isDark) {
+      if (isDark) {
+        iconSun.classList.add('hidden');
+        iconMoon.classList.remove('hidden');
+      } else {
+        iconMoon.classList.add('hidden');
+        iconSun.classList.remove('hidden');
+      }
+    }
+
+    (function initTheme() {
+      const storedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+        docEl.classList.add('dark');
+        setThemeIcon(true);
+      } else {
+        docEl.classList.remove('dark');
+        setThemeIcon(false);
+      }
+    })();
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = docEl.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      setThemeIcon(isDark);
+    });
 
     // Mobile slide-in menu
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
