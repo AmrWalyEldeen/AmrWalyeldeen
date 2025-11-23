@@ -216,6 +216,15 @@
         transition-duration: 0.01ms !important;
       }
     }
+
+    /* Quote rotator */
+    .quote-fade {
+      opacity: 0;
+      transition: opacity 0.6s ease-in-out;
+    }
+    .quote-fade.visible {
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -392,6 +401,22 @@
         <div class="card card-hover rounded-2xl p-4 text-center">
           <div class="text-2xl font-bold text-brand-primary dark:text-sky-300">2</div>
           <div class="text-xs uppercase tracking-wide text-muted-text dark:text-gray-400 mt-1">Funded projects</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUOTES (NEW SECTION) -->
+    <section id="quotes" class="max-w-4xl mx-auto px-4 sm:px-6 pb-10 fade-in">
+      <div class="card card-hover rounded-2xl p-8 md:p-10 text-center relative overflow-hidden">
+        <div class="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-40 h-40 bg-gradient-to-b from-brand-soft/70 to-transparent opacity-70 blur-2xl"></div>
+        <div class="relative">
+          <div class="mb-4 flex justify-center">
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full border border-brand-primary/30 text-brand-primary dark:text-sky-300 text-2xl">
+              &ldquo;
+            </span>
+          </div>
+          <p id="quote-text" class="quote-fade text-lg md:text-2xl font-serif leading-relaxed"></p>
+          <p id="quote-author" class="quote-fade mt-4 text-base md:text-lg font-semibold text-brand-primary dark:text-sky-300"></p>
         </div>
       </div>
     </section>
@@ -1009,6 +1034,113 @@
     mobileLinks.forEach(link => {
       link.addEventListener('click', closeMobileMenu);
     });
+
+    // =========================
+    //   QUOTE ROTATOR (NEW)
+    // =========================
+    const quotes = [
+      {
+        text: "Nothing in life is to be feared, it is only to be understood.",
+        author: "Marie Curie"
+      },
+      {
+        text: "I was taught that the way of progress was neither swift nor easy.",
+        author: "Marie Curie"
+      },
+      {
+        text: "The unprepared mind cannot see the outstretched hand of opportunity.",
+        author: "Sir Alexander Fleming"
+      },
+      {
+        text: "A scientific research is a search after truth, and it is only after discovery that the question of applicability can be usefully considered.",
+        author: "Henri Moissan"
+      },
+      {
+        text: "When I draw a molecule in China or in Argentina, it is the same molecule. People understand immediately.",
+        author: "Ben Feringa"
+      },
+      {
+        text: "Would it not be better if one could really ‘see’ whether molecules were just as experiments suggested?",
+        author: "Dorothy Crowfoot Hodgkin"
+      },
+      {
+        text: "Every scientist dreams of doing something that can help the world.",
+        author: "Tu Youyou"
+      },
+      {
+        text: "The discovery of artemisinin was an example of successful collective efforts.",
+        author: "Tu Youyou"
+      },
+      {
+        text: "Above all, don’t fear difficult moments. The best comes from them.",
+        author: "Rita Levi-Montalcini"
+      },
+      {
+        text: "If you know you are on the right track, if you have this inner knowledge, then nobody can turn you off.",
+        author: "Barbara McClintock"
+      },
+      {
+        text: "Cancer is not one disease but many diseases.",
+        author: "Siddhartha Mukherjee"
+      },
+      {
+        text: "To confront cancer is to encounter a parallel species, one perhaps more adapted to survival than even we are.",
+        author: "Siddhartha Mukherjee"
+      },
+      {
+        text: "A positive attitude does not cure cancer, any more than a negative one causes it.",
+        author: "Siddhartha Mukherjee"
+      },
+      {
+        text: "Cancer is a word, not a sentence.",
+        author: "John Diamond"
+      },
+      {
+        text: "You beat cancer by how you live, why you live, and in the manner in which you live.",
+        author: "Stuart Scott"
+      },
+      {
+        text: "Every single cancer is a genetic disease. Not necessarily inherited from your parents, but it’s genetic changes which cause cancer.",
+        author: "J. Craig Venter"
+      },
+      {
+        text: "Biology is the study of complicated things that give the appearance of having been designed for a purpose.",
+        author: "Richard Dawkins"
+      },
+      {
+        text: "Biology gives you a brain. Life turns it into a mind.",
+        author: "Jeffrey Eugenides"
+      }
+    ];
+
+    const quoteTextEl = document.getElementById('quote-text');
+    const quoteAuthorEl = document.getElementById('quote-author');
+    let currentQuoteIndex = 0;
+
+    function showQuote() {
+      if (!quoteTextEl || !quoteAuthorEl || quotes.length === 0) return;
+
+      // Fade out
+      quoteTextEl.classList.remove('visible');
+      quoteAuthorEl.classList.remove('visible');
+
+      setTimeout(() => {
+        const { text, author } = quotes[currentQuoteIndex];
+
+        quoteTextEl.textContent = `“${text}”`;
+        quoteAuthorEl.textContent = `— ${author}`;
+
+        // Fade in
+        quoteTextEl.classList.add('visible');
+        quoteAuthorEl.classList.add('visible');
+
+        currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+      }, 300);
+    }
+
+    // Initial quote + interval every 10s
+    showQuote();
+    setInterval(showQuote, 10000);
   </script>
 </body>
 </html>
